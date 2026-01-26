@@ -31,3 +31,64 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# .gitignore - Archivos a NO subir a Git
+# ========================================
+
+# ===== ARCHIVOS SENSIBLES (NUNCA SUBIR) =====
+.env
+.env.local
+.env.production
+*.key
+*.pem
+secrets/
+
+# ===== COMPILACIÓN Y BUILD =====
+target/
+build/
+out/
+*.class
+*.jar
+*.war
+!gradle-wrapper.jar
+
+# ===== IDEs =====
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+
+# ===== LOGS =====
+logs/
+*.log
+log/
+
+# ===== SISTEMA OPERATIVO =====
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# ===== BASE DE DATOS =====
+*.db
+*.sqlite
+*.sqlite3
+
+# ===== DEPENDENCIAS =====
+node_modules/
+vendor/
+
+# ===== TEMPORALES =====
+*.tmp
+*.temp
+*.cache
+.cache/
+
+# ===== DOCKER =====
+# Mantenemos Dockerfile y docker-compose.yml
+# pero ignoramos volúmenes locales
+docker-volumes/

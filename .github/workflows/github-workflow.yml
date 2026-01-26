@@ -1,0 +1,107 @@
+# ===================================================
+# GitHub Actions - CI/CD para Gestor de Tareas
+# ===================================================
+# Se ejecuta automaticamente cada vez que haces push a main
+
+name: CI/CD - Gestor de Tareas
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  # Job 1: Construccion y Tests
+  build-and-test:
+    name: Compilar y Testear
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout codigo
+      uses: actions/checkout@v4
+    
+    - name: ☕ Configurar Java 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: 'maven'
+    
+    - name: 🔨 Compilar con Maven
+      run: mvn clean compile
+    
+    - name: 🧪 Ejecutar tests
+      run: mvn test
+    
+    - name: 📦 Empaquetar aplicacion
+      run: mvn package -DskipTests
+    
+    - name: 📊 Subir JAR como artefacto
+      uses: actions/upload-artifact@v4
+      with:
+        name: gestor-tareas-jar
+        path: target/*.jar
+        retention-days: 5
+
+  # Job 2: Analisis de codigo (opcional pero recomendado)
+  code-quality:
+    name: Analisis de Calidad
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    
+    steps:
+    - name: 📥 Checkout codigo
+      uses: actions/checkout@v4
+    
+    - name: ☕ Configurar Java 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: 'maven'
+    
+    - name: 🔍 Verificar codigo
+      run: mvn verify -DskipTests
+
+  # Job 3: Construccion de imagen Docker
+  docker-build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    
+    steps:
+    - name: 📥 Checkout codigo
+      uses: actions/checkout@v4
+    
+    - name: 🐳 Login a Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    
+    - name: 🏗️ Construir y publicar imagen Docker
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: true
+        tags: |
+          ${{ secrets.DOCKER_USERNAME }}/gestor-tareas:latest
+          ${{ secrets.DOCKER_USERNAME }}/gestor-tareas:${{ github.sha }}
+        cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/gestor-tareas:latest
+        cache-to: type=inline
+
+  # Job 4: Notificacion de despliegue
+  deploy-notification:
+    name: Notificar Despliegue
+    runs-on: ubuntu-latest
+    needs: docker-build
+    if: success()
+    
+    steps:
+    - name: ✅ Despliegue completado
+      run: |
+        echo "🎉 Despliegue exitoso!"
+        echo "📦 Imagen Docker publicada"
+        echo "🚀 Railway desplegara automaticamente"

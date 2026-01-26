@@ -1,0 +1,59 @@
+# ===================================================
+# Docker Compose - Gestor de Tareas
+# ===================================================
+# Para ejecutar localmente con Docker Desktop en Windows
+
+version: '3.8'
+
+services:
+  # Base de datos PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: gestor-tareas-postgres
+    environment:
+      POSTGRES_DB: gestor_tareas
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"  # Puerto 5433 en Windows para no conflictuar con tu PostgreSQL 15 local
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - gestor-tareas-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Aplicacion Spring Boot
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gestor-tareas-app
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgres:5432/gestor_tareas
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      FRONTEND_URL: http://localhost:3000
+      SPRING_PROFILES_ACTIVE: prod
+      PORT: 8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - gestor-tareas-network
+    restart: unless-stopped
+
+# Volumenes para persistir datos
+volumes:
+  postgres_data:
+    driver: local
+
+# Red interna para comunicacion entre contenedores
+networks:
+  gestor-tareas-network:
+    driver: bridge
