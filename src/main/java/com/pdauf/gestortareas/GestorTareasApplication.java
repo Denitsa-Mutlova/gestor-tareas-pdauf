@@ -11,4 +11,5 @@ public class GestorTareasApplication {
 	}
 
 	// Test de CI/CD - Despliegue automático
+	// Retest Docker build
 }
