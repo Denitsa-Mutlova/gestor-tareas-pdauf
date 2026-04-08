@@ -10,4 +10,5 @@ public class GestorTareasApplication {
 		SpringApplication.run(GestorTareasApplication.class, args);
 	}
 
+	// Test de CI/CD - Despliegue automático
 }
