@@ -7,9 +7,9 @@ name: CI/CD - Gestor de Tareas
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, master, tarea-ut3.1-robusta ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main, master, tarea-ut3.1-robusta ]
 
 jobs:
   # Job 1: Construccion y Tests
