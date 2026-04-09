@@ -1,42 +1,30 @@
+/* ── ESTILOS GLOBALES ── */
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  min-height: 100vh;
+  background-color: #f8f9fa;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* ── ANIMACIÓN: aparición de filas de la tabla ── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.fila-animada {
+  animation: fadeInUp 0.3s ease-in-out;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+/* ── TRANSICIÓN en botones ── */
+.boton-animar {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.card {
-  padding: 2em;
+.boton-animar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
-.read-the-docs {
-  color: #888;
+.boton-animar:active {
+  transform: translateY(0);
+  box-shadow: none;
 }
